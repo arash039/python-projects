@@ -24,6 +24,32 @@
    ```bash
    git clone https://github.com/arash039/python-projects.git
    cd python-projects/arachnida
+   ```
+2. Install dependencies:
+   ``` bash
    pip install -r requirements.txt
    ```
+## Usage
+
+### Spider
+The **Spider** utility scrapes websites for supported file types (e.g., images, PDFs, DOCX) and downloads them.
+
+#### Commands:
+- **Recursive scraping**:
+  ```bash
+  python3 spider.py -r <URL>
+  python3 spider.py -r <URL> -l <DEPTH>
+  python3 spider.py -r <URL> -p <PATH>
+  python3 spider.py -r <URL> -p <PATH>
+  ```
+### Scorpion
+The Scorpion utility extracts and displays metadata from images.
+#### Commands:
+``` bash
+python3 scorpion.py FILE1 FILE2 ...
+```
+
+
+
+   
    
