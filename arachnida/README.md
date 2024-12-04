@@ -45,9 +45,9 @@ The **Spider** utility scrapes websites for supported file types (e.g., images, 
 ### Scorpion
 The Scorpion utility extracts and displays metadata from images.
 #### Commands:
-``` bash
-python3 scorpion.py FILE1 FILE2 ...
-```
+   ``` bash
+   python3 scorpion.py FILE1 FILE2 ...
+   ```
 
 
 
