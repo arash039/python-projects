@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+
+import hmac
+import hashlib
+import time
+import math
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+import argparse
+
+def encrypt_key(key):
+	encryption_key = get_random_bytes(32)
+	cipher = AES.new(encryption_key, AES.MODE_GCM)
+	ciphertext, tag = cipher.encrypt_and_digest(key)
+	padding = get_random_bytes(16)
+	return (padding + encryption_key + cipher.nonce + tag + ciphertext)
+
+def decrypt_key(encrypted_data):
+	padding = encrypted_data[0:16]
+	encryption_key = encrypted_data[16:48]
+	nonce = encrypted_data[48:64]
+	tag = encrypted_data[64:80]
+	ciphertext = encrypted_data[80:]
+	cipher = AES.new(encryption_key, AES.MODE_GCM, nonce=nonce)
+	key = cipher.decrypt_and_verify(ciphertext, tag)
+	return key
+
+def generate_otp(key, counter):
+	counter_bytes = counter.to_bytes(8, byteorder='big')
+	hmac_hash = hmac.new(key, counter_bytes, hashlib.sha1).digest()
+	offset = hmac_hash[-1] % 16
+	raw_value = int.from_bytes(hmac_hash[offset:offset + 4], byteorder='big')
+	code = raw_value % 1000000
+	return str(code).zfill(6)
+
+def store_key(filename):
+	with open(filename, 'r') as f:
+		key = f.read().strip()
+	if (len(key) != 64) or (not is_hex(key)):
+		print("Error: Key must be 64 hexadecimal characters.")
+		return
+	encrypted_key = encrypt_key(bytes.fromhex(key))
+	with open("ft_otp.key", "wb") as f:
+		f.write(encrypted_key)
+	print("Key was successfully saved in ft_otp.key.")
+
+def load_key(filename):
+	with open(filename, "rb") as f:
+		encrypted_key = f.read()
+	return decrypt_key(encrypted_key)
+
+def is_hex(key): 
+	try : 
+		int(key, 16)
+		return True
+	except ValueError:
+		return False
+
+def main():
+	parser = argparse.ArgumentParser(description="HOTP Generator")
+	parser.add_argument('-g', type=str)
+	parser.add_argument('-k', type=str)
+	args = parser.parse_args()
+
+	if args.g:
+		store_key(args.g)
+
+	if args.k:
+		key = load_key(args.k)
+		counter = int(math.floor(time.time() / 30))
+		otp = generate_otp(key, counter)
+		print(f"One-time password:\n{otp}")
+
+if __name__ == "__main__":
+	main()
+

