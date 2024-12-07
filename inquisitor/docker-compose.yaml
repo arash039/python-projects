@@ -1,0 +1,42 @@
+services:
+  server:
+    image: panubo/vsftpd:latest
+    container_name: server
+    ports:
+      - "21:21"
+    environment:
+      - FTP_USER=ftpuser
+      - FTP_PASSWORD=ftppass
+    volumes:
+      #- /home/arash/Desktop/csp/inquisitor-other/server:/srv
+      - ./server:/srv
+    networks:
+      - inquisitor
+
+  client:
+    image: jlesage/filezilla
+    container_name: client
+    ports:
+      - "5800:5800"
+    volumes:
+      - ./storage:/storage:rw
+    networks:
+      - inquisitor
+  
+  curl_app:
+    image: alpine:latest
+    container_name: curl_app
+    networks:
+      - inquisitor
+    command: >
+      /bin/sh -c "apk add --no-cache curl; tail -f /dev/null"
+
+  inquisitor:
+    build: .
+    image: inquisitor
+    container_name: inquisitor
+    networks:
+      - inquisitor
+
+networks:
+  inquisitor:
