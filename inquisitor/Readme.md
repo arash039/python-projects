@@ -18,8 +18,8 @@ Now the test environment is ready to use. To get the necessary information run:
 make info
 ```
 The Filezilla service would be accessible on the following and necessary credentials are ftpuser, ftppass:
-```HTTP
-htto://localhost:5600
+```
+http://localhost:5600
 ```
 To do the ARP poisoning first get the sample command to run:
 ```sh
