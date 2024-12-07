@@ -11,7 +11,8 @@ make
 ```
 Then give necessary permissions to docker volumes to operate:
 ```sh
-make perm
+chmod 777 storage
+chmod 777 server
 ```
 Now the test environment is ready to use. To get the necessary information run:
 ```sh
