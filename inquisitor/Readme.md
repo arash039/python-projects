@@ -25,7 +25,7 @@ To do the ARP poisoning first get the sample command to run:
 ```sh
 make run
 ```
-then enter the inquisitor container and run the command above:
+then enter the inquisitor container and run the command above. Use -v command for verbose mode if needed:
 ```sh
 make inquisitor
 ./inquisitor.py [SRC_IP] [SRC_MAC] [TARGET_IP] [TARGET_MAC]
