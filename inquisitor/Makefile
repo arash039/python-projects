@@ -71,12 +71,6 @@ info	:
 	@printf " - MacAddress	: "
 	@docker inspect --format='{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' $(CLIENT1)
 
-.PHONY: perm
-perm	:
-	sudo groupadd -f docker
-	sudo usermod -aG docker $(USER)
-	newgrp docker
-
 IP_SV := $(shell docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(SERVER))
 MAC_SV := $(shell docker inspect --format='{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' $(SERVER))
 IP_CL := $(shell docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(CLIENT))
