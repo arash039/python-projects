@@ -12,7 +12,7 @@ This script requires the following Python packages:
 
 You can install them using:
 ```sh
-pip install requests beautifulsoup4
+pip install requirements.txt
 ```
 
 ## Usage
