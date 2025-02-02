@@ -1,0 +1,45 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex03: Color Shades Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            height: 40px;
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ex03: Color Shades Table</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Noir</th>
+                <th>Rouge</th>
+                <th>Bleu</th>
+                <th>Vert</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range %}
+            <tr>
+                <td style="background-color: {{ color_shades.noir|index:i }};"></td>
+				<td style="background-color: {{ color_shades.rouge|index:i }};"></td>
+				<td style="background-color: {{ color_shades.bleu|index:i }};"></td>
+				<td style="background-color: {{ color_shades.vert|index:i }};"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

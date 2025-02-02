@@ -1,0 +1,10 @@
+{% extends "ex01/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block stylesheet %}{{ stylesheet }}{% endblock %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <p>{{ content|safe }}</p>
+{% endblock %}

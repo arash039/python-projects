@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex03: Color Shades Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            height: 40px;
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ex03: Color Shades Table</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Noir</th>
+                <th>Rouge</th>
+                <th>Bleu</th>
+                <th>Vert</th>
+            </tr>
+        </thead>
+        <tbody>
+			{% for row in rows %}
+			<tr>
+				<td style="background-color: {{ row.noir }};"></td>
+				<td style="background-color: {{ row.rouge }};"></td>
+				<td style="background-color: {{ row.bleu }};"></td>
+				<td style="background-color: {{ row.vert }};"></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+    </table>
+</body>
+</html>

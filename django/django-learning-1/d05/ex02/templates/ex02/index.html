@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex02: Input History</title>
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+</head>
+<body>
+    <h1>Ex02: Input History</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }} <!-- .as_p means each field is wrapped in a <p> tag (for spacing) can be .as_ul or .as_table --> 
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Submission History</h2>
+    <ul>
+        {% for entry in history %}
+            <li>{{ entry }}</li>
+        {% empty %}
+            <p>No history available.</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>
