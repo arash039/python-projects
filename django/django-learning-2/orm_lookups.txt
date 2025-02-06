@@ -1,0 +1,15 @@
+Lookup	Meaning
+field__exact=value	Exact match (= in SQL)
+field__iexact=value	Case-insensitive exact match
+field__contains=value	Field contains the given value
+field__icontains=value	Case-insensitive contains
+field__gt=value	Greater than (> in SQL)
+field__gte=value	Greater than or equal to (>=)
+field__lt=value	Less than (<)
+field__lte=value	Less than or equal to (<=)
+field__in=[val1, val2]	Matches any value in a list
+field__startswith=value	Field starts with value
+field__istartswith=value	Case-insensitive starts with
+field__endswith=value	Field ends with value
+field__iendswith=value	Case-insensitive ends with
+field__range=(start, end)	Field value is between start and end

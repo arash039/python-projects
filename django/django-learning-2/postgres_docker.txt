@@ -1,0 +1,16 @@
+docker pull postgres
+docker run --name my-postgres -e POSTGRES_USER=djangouser -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=djangotraining -p 5432:5432 -d postgres
+\l  -- List all databases
+\dt -- List tables in the current database
+\q  -- Exit the psql shell
+http://127.0.0.1:8000/ex00/init/
+\d ex00_movies
+psql -U djangouser -d djangotraining
+
+
+python manage.py makemigrations ex01
+python manage.py createsuperuser
+http://127.0.0.1:8000/admin/
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc" -delete
