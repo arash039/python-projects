@@ -2,6 +2,7 @@
 
 Life Pro Tips is a Django-based web application where users can share, upvote, and downvote life tips. Users can register, log in, and manage their tips. The application also features a reputation system based on user interactions with tips.
 
+![](https://github.com/arash039/python-projects/blob/main/django/life_pro_tips/output.gif)
 ## Features
 
 - User registration and authentication
