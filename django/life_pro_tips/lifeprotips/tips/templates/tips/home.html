@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+	<h1 class="mb-3">Life Pro Tips</h1>
+	{% if user.is_authenticated %}
+		<div class="card mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Share a Tip</h5>
+				<form method="post">
+					{% csrf_token %}
+					{{ form.as_p }}
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		</div>
+	{% else %}
+		<p class="text-muted">Log in to share a tip.</p>
+	{% endif %}
+	
+	<h2>Recent Tips</h2>
+	{% for tip in tips %}
+		<div class="card mb-3">
+			<div class="card-body">
+				<p>{{ tip.content }}</p>
+				<small class="text-muted">
+					By {{ tip.author.username }} ({{ tip.author.reputation }}) on {{ tip.date|date:"F j, Y" }}
+				</small>
+				{% if user.is_authenticated %}
+					<div class="mt-2">
+						<a href="{% url 'upvote_tip' tip.id %}" class="btn {% if user in tip.upvotedby.all %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
+							👍 {{ tip.upvotedby.count }}
+						</a>
+
+						{% if user == tip.author or user.can_downvote %}
+							<a href="{% url 'downvote_tip' tip.id %}" class="btn {% if user in tip.downvoted_by.all %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm">
+								👎 {{ tip.downvoted_by.count }}
+							</a>
+						{% else %}<small class="text-muted">🚫 You don't have enough points to downvote |</small>
+						{% endif %}
+
+						{% if user == tip.author or user.can_delete_tips %}
+							<a href="{% url 'delete_tip' tip.id %}" class="btn btn-outline-secondary btn-sm"  onclick="return confirm('Are you sure you want to delete this tip?');">🗑 Delete</a>
+						{% else %}<small class="text-muted">🚫 You don't have enough points to delete </small>
+						{% endif %}
+					</div>
+				{% else %}
+					<p class="text-muted">Log in to vote or delete.</p>
+				{% endif %}
+			</div>
+		</div>
+	{% empty %}
+		<p>No tips yet. Be the first to share one!</p>
+	{% endfor %}
+{% endblock %}
