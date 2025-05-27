@@ -4,5 +4,5 @@ build:
 run:
 	docker run -it --rm -v $(CURRENT_DIR):/app stockholm
 clean:
-	docker prune -a
+	docker system prune -a
 	docker image prune -a
