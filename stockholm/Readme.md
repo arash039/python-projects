@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Stockholm is a Python-based file encryption and decryption tool designed for securing files within a designated directory. It uses the Fernet encryption from the cryptography library and supports reversing the encryption process. The project includes Docker support for containerized execution.
+Stockholm is a Python-based file encryption and decryption tool designed for encrypting files with specific formats within a designated directory. It uses the Fernet encryption from the cryptography library and supports reversing the encryption process. The project includes Docker support for containerized execution.
 
 ## Features
 
